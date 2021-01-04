@@ -27,10 +27,4 @@
       <arg name="respawn_mavros" default="$(arg respawn_mavros)" />
   </include>
 
-  <include file="$(find px4)/launch/posix_sitl.launch">
-      <arg name="vehicle" value="$(arg mav_name)"/>
-  </include>
-
-
-
 </launch>

@@ -92,7 +92,7 @@ class Controller:
 
         # We will fly at a fixed altitude for now
         # Altitude setpoint, [meters]
-        self.ALT_SP = 3.0
+        self.ALT_SP = 1.00
         # update the setpoint message with the required altitude
         self.sp.position.z = self.ALT_SP
         # Step size for position update
@@ -101,11 +101,12 @@ class Controller:
         self.FENCE_LIMIT = 5.0
 
         # A Message for the current local position of the drone
-        self.local_pos = Point(0.0, 0.0, 3.0)
+        self.local_pos = Point(0.0, 0.0, 0.0)
 
         # initial values for setpoints
         self.sp.position.x = 0.0
         self.sp.position.y = 0.0
+	self.sp.position.z = 1.0
 
         # speed of the drone is set using MPC_XY_CRUISE parameter in MAVLink
         # using QGroundControl. By default it is 5 m/s.
@@ -173,6 +174,15 @@ def main():
         print("wait for FCU...")
         rate.sleep()
 
+    # Make sure the drone is armed
+    while not cnt.state.armed:
+	print("ready to arm")
+        modes.setArm()
+        rate.sleep()
+
+    modes.setTakeoff()
+    rate.sleep()
+
     # We need to send few setpoint messages, then activate OFFBOARD mode, to take effect
     k=0
     print("send few commands")
@@ -184,16 +194,13 @@ def main():
     # activate OFFBOARD mode
     print("set to OFFBOARD mode")
     modes.setOffboardMode()
-
-    # Make sure the drone is armed
-    while not cnt.state.armed:
-        modes.setArm()
-        rate.sleep()
+    
 
     # ROS main loop
     if(not rospy.is_shutdown()):
         print("start main task...")
     while not rospy.is_shutdown():
+	print("hello")
         # setpoint 
         cnt.local_pos.x = 0
         cnt.local_pos.y = 0
