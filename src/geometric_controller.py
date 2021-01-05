@@ -124,7 +124,7 @@ def main():
     
     # initial pt
     R0 = np.array([1, 0, 0, 0, 1, 0, 0, 0, 1])
-    y0 = np.concatenate((0, 0, 0, 0, 0, 0, R0,0, 0, 0), axis=None)
+    y0 = np.concatenate((0, 0, 0, 0, 0, 0, R0, 0, 0, 0), axis=None)
     
     # slove ode
     n = 40
