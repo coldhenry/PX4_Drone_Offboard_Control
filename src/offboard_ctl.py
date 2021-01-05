@@ -92,7 +92,7 @@ class Controller:
 
         # We will fly at a fixed altitude for now
         # Altitude setpoint, [meters]
-        self.ALT_SP = 1.00
+        self.ALT_SP = 3.00
         # update the setpoint message with the required altitude
         self.sp.position.z = self.ALT_SP
         # Step size for position update
@@ -106,7 +106,7 @@ class Controller:
         # initial values for setpoints
         self.sp.position.x = 0.0
         self.sp.position.y = 0.0
-	self.sp.position.z = 1.0
+        self.sp.position.z = 0.0
 
         # speed of the drone is set using MPC_XY_CRUISE parameter in MAVLink
         # using QGroundControl. By default it is 5 m/s.
@@ -127,6 +127,7 @@ class Controller:
     def updateSp(self):
         self.sp.position.x = self.local_pos.x
         self.sp.position.y = self.local_pos.y
+        self.sp.position.z = self.local_pos.z
 
     def x_dir(self):
         self.sp.position.x = self.local_pos.x + 5
@@ -176,17 +177,17 @@ def main():
 
     # Make sure the drone is armed
     while not cnt.state.armed:
-	print("ready to arm")
+        print("ready to arm")
         modes.setArm()
         rate.sleep()
 
-    modes.setTakeoff()
-    rate.sleep()
+    # modes.setTakeoff()
+    # rate.sleep()
 
     # We need to send few setpoint messages, then activate OFFBOARD mode, to take effect
     k=0
     print("send few commands")
-    while k<100 and not rospy.is_shutdown():
+    while k<200 and not rospy.is_shutdown():
         sp_pub.publish(cnt.sp)
         rate.sleep()
         k = k + 1
@@ -200,11 +201,10 @@ def main():
     if(not rospy.is_shutdown()):
         print("start main task...")
     while not rospy.is_shutdown():
-	print("hello")
-        # setpoint 
-        cnt.local_pos.x = 0
-        cnt.local_pos.y = 0
-        cnt.local_pos.z = 1
+        print("executing...")
+        cnt.local_pos.x = 1
+        cnt.local_pos.y = 2
+        cnt.local_pos.z = 3
         
         # update and publish
         cnt.updateSp()
