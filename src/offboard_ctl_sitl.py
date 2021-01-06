@@ -103,6 +103,8 @@ class Controller:
         self.state = State()
         # Instantiate a setpoints message
         self.sp = PositionTarget()
+        # Instantiate a attude message
+        self.at = AttidudeTarget()
         # set the flag to use position setpoints and yaw angle
         self.sp.type_mask = int("010111111000", 2)
         # LOCAL_NED
@@ -129,6 +131,16 @@ class Controller:
         # using QGroundControl. By default it is 5 m/s.
 
     # Callbacks
+
+    ## command callback
+    def cmdCb(self, msg):
+        self.header.stamp = msg.header.stamp
+        self.header.frame_idmsg.header.frame_id
+        self.body_rate.x = msg.body_rate.x
+        self.body_rate.y = msg.body_rate.y
+        self.body_rate.z = msg.body_rate.z
+        self.type_mask = msg.type_mask
+        self.thrust = msg.thrust
 
     ## local position callback
     def posCb(self, msg):
@@ -184,8 +196,11 @@ def main():
     # Subscribe to drone's local position
     rospy.Subscriber("mavros/local_position/pose", PoseStamped, cnt.posCb)
 
-    # Setpoint publisher
-    sp_pub = rospy.Publisher("mavros/setpoint_raw/local", PositionTarget, queue_size=1)
+    # Subscribe to control of geometric controller
+    rospy.Subscriber("computed_cmd", AttidudeTarget, cnt.cmdCb)
+
+    # attitude publisher
+    at_pub = rospy.Publisher("mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=1)
 
     # wait for FCU connection
     while not rospy.is_shutdown() and not cnt.state.connected:
@@ -214,12 +229,8 @@ def main():
     if not rospy.is_shutdown():
         print ("start main task...")
     while not rospy.is_shutdown():
-        cnt.local_pos.x = 0
-        cnt.local_pos.y = 0
-        cnt.local_pos.z = 7
         # update and publish
-        cnt.updateSp()
-        sp_pub.publish(cnt.sp)
+        at_pub.publish(cnt.at)
         rate.sleep()
 
     print ("finished")
