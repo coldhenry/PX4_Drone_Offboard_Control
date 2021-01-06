@@ -10,8 +10,8 @@
   <arg name="log_output" default="screen" />
   <arg name="fcu_protocol" default="v2.0" />
   <arg name="respawn_mavros" default="false" />
-  
-  <node pkg="offboard_ctl" type="offboard_ctl.py" name="offboard_ctl" output="screen">
+
+  <node pkg="offboard_ctl" type="offboard_ctl_sitl.py" name="offboard_ctl_sitl" output="screen">
   </node>
 
   <include file="$(find mavros)/launch/node.launch">
