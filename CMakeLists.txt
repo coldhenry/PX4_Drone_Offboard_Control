@@ -109,7 +109,7 @@ catkin_package(
 )
 
 catkin_install_python(
-  PROGRAMS src/offboard_ctl.py
+  PROGRAMS src/offboard_ctl.py src/calculate_sitl.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
