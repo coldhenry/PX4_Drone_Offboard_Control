@@ -52,7 +52,7 @@ class callback:
         # PD controller
         # self.getError()
         # self.PDcontroller()
-        # self.pubRLcmd()
+        
 
         # geometric controller
         #t = np.linspace(self.time, self.time + 0.1, 1)
@@ -60,8 +60,9 @@ class callback:
         self.state = np.concatenate((self.x, self.y, self.z, self.vx, self.vy, self.vz, self.rotmat, self.roll_v, self.pitch_v, self.yaw_v), axis=None)
         #print(self.state)
         f, M, _, _, _, _ = geo_ctl(self.state, t)
+        print("f: {f}\n M: {M}\n".format(f = f, M = M))
         self.time += 0.1
-
+        self.pubRLcmd(f, M)
 
     def feedbackPose_cb(self, data):
         self.x, self.y, self.z = (
@@ -243,11 +244,6 @@ class callback:
         msg.body_rate.z = M[2]
         msg.type_mask = 128
         msg.thrust = f
-        # Ignore orientation messages
-        # if action[0] == 0:
-        #     msg.thrust = action[0] + 10
-        # else :
-        #     msg.thrust = action[0]
         print("F", msg.thrust)
         # ============================RL controller
 
