@@ -6,6 +6,8 @@ from math import cos, sin
 import scipy
 import matplotlib.pyplot as plt
 
+from utils import trajGenerator
+
 # Simulation parameters
 g = 9.81
 m = 1.56
@@ -73,19 +75,9 @@ def geometric_controller(y, t):
     kOm = 1
 
     # desired states
-    des_pos = np.array([[0.4 * t, 0.4 * sin(np.pi * t), 0.6 * cos(np.pi * t)]]).T
-    des_vel = np.array(
-        [[0.4, 0.4 * np.pi * cos(np.pi * t), -0.6 * np.pi * sin(np.pi * t)]]
-    ).T
-    des_acc = np.array(
-        [
-            [
-                0,
-                -0.4 * np.pi * np.pi * sin(np.pi * t),
-                -0.6 * np.pi * np.pi * cos(np.pi * t),
-            ]
-        ]
-    ).T
+    # des_pos, des_vel, des_acc: size (3,1)
+    des_pos, des_vel, des_acc = trajGenerator(option = "fixed position")
+    
 
     b1d = np.array([[cos(np.pi * t), sin(np.pi * t), 0]]).T
     w_desired = np.array([[0, 0, 0]]).T
