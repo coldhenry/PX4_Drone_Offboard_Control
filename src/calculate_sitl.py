@@ -13,6 +13,7 @@ from geometry_msgs.msg import PoseStamped, TwistStamped  ## ???
 
 from geometric_controller import geometric_controller as geo_ctl
 
+print("hi")
 
 class callback:
     def __init__(self):
