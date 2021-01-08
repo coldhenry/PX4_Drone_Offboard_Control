@@ -201,7 +201,9 @@ def main():
     rospy.Subscriber("computed_cmd", AttitudeTarget, cnt.cmdCb)
 
     # attitude publisher
-    at_pub = rospy.Publisher("mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=1)
+    at_pub = rospy.Publisher(
+        "mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=1
+    )
 
     # wait for FCU connection
     while not rospy.is_shutdown() and not cnt.state.connected:
@@ -212,8 +214,13 @@ def main():
     k = 0
     print ("send few commands")
     while k < 10:
+<<<<<<< HEAD
         #sp_pub.publish(cnt.sp)
         at_pub.publish(cnt.sp)
+=======
+        at_pub.publish(cnt.at)
+        # sp_pub.publish(cnt.sp)
+>>>>>>> 92205c9848a9d6aac979f8e481966bfdc9735f62
         rate.sleep()
         k = k + 1
 

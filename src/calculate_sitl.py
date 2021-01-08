@@ -40,7 +40,7 @@ class callback:
         self.vx, self.vy, self.vz = 0.0, 0.0, 0.0
         self.vx_d, self.vy_d, self.vz_d = 0.0, 0.0, 0.0
         self.roll_v, self.pitch_v, self.yaw_v = 0.0, 0.0, 0.0
-        self.rotmat = np.zeros((3, 3))
+        self.rotmat = Rot.from_dcm(np.array([[1.0,0.0,0.0],[0.0,1.0,0.0],[0.0,0.0,1.0]]))
         self.rotmat_d = np.zeros((3, 3))
         self.euler = np.zeros((3,))
         self.euler_d = np.zeros((3,))
@@ -57,7 +57,8 @@ class callback:
         # geometric controller
         #t = np.linspace(self.time, self.time + 0.1, 1)
         t = self.time
-        self.state = np.concatenate((self.x, self.y, self.z, self.vx, self.vy, self.vz, self.rotmat, self.roll_v, self.pitch_v, self.yaw_v), axis=None)
+        rotmat = np.array(self.rotmat.as_dcm())
+        self.state = np.concatenate((self.x, self.y, self.z, self.vx, self.vy, self.vz, rotmat, self.roll_v, self.pitch_v, self.yaw_v), axis=None)
         #print(self.state)
         f, M, _, _, _, _ = geo_ctl(self.state, t)
         print("f: {f}\n M: {M}\n".format(f = f, M = M))
@@ -76,6 +77,7 @@ class callback:
             data.pose.orientation.z,
             data.pose.orientation.w,
         )
+        
         self.rotmat = Rot.from_quat([self.qx, self.qy, self.qz, self.qw])
         self.euler = self.rotmat.as_euler("zxy", degrees=False)  # changed here
         # print('euler',self.euler)

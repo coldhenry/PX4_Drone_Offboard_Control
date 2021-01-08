@@ -11,9 +11,6 @@
   <arg name="fcu_protocol" default="v2.0" />
   <arg name="respawn_mavros" default="false" />
 
-  <node pkg="offboard_ctl" type="offboard_ctl_sitl.py" name="offboard_ctl_sitl" output="screen">
-  </node>
-
   <include file="$(find mavros)/launch/node.launch">
       <arg name="pluginlists_yaml" value="$(find mavros)/launch/px4_pluginlists.yaml" />
       <arg name="config_yaml" value="$(find mavros)/launch/px4_config.yaml" />
@@ -32,6 +29,8 @@
       <arg name="gui" value="$(arg visualization)"/>
   </include>
 
+  <node pkg="offboard_ctl" type="offboard_ctl_sitl.py" name="offboard_ctl_sitl" output="screen">
+  </node>
 
 
 </launch>
