@@ -4,6 +4,7 @@ import rospy
 
 # 3D point & Stamped Pose msgs
 from geometry_msgs.msg import Point, PoseStamped
+from mavros_msgs.msg import AttitudeTarget
 
 # import all mavros messages and services
 from mavros_msgs.msg import *
@@ -103,8 +104,8 @@ class Controller:
         self.state = State()
         # Instantiate a setpoints message
         self.sp = PositionTarget()
-        # Instantiate a attude message
-        self.at = AttidudeTarget()
+        # Instantiate a attitude message
+        self.at = AttitudeTarget()
         # set the flag to use position setpoints and yaw angle
         self.sp.type_mask = int("010111111000", 2)
         # LOCAL_NED
@@ -134,13 +135,13 @@ class Controller:
 
     ## command callback
     def cmdCb(self, msg):
-        self.header.stamp = msg.header.stamp
-        self.header.frame_idmsg.header.frame_id
-        self.body_rate.x = msg.body_rate.x
-        self.body_rate.y = msg.body_rate.y
-        self.body_rate.z = msg.body_rate.z
-        self.type_mask = msg.type_mask
-        self.thrust = msg.thrust
+        self.at.header.stamp = msg.header.stamp
+        self.at.header.frame_id = msg.header.frame_id
+        self.at.body_rate.x = msg.body_rate.x
+        self.at.body_rate.y = msg.body_rate.y
+        self.at.body_rate.z = msg.body_rate.z
+        self.at.type_mask = msg.type_mask
+        self.at.thrust = msg.thrust
 
     ## local position callback
     def posCb(self, msg):
@@ -197,7 +198,7 @@ def main():
     rospy.Subscriber("mavros/local_position/pose", PoseStamped, cnt.posCb)
 
     # Subscribe to control of geometric controller
-    rospy.Subscriber("computed_cmd", AttidudeTarget, cnt.cmdCb)
+    rospy.Subscriber("computed_cmd", AttitudeTarget, cnt.cmdCb)
 
     # attitude publisher
     at_pub = rospy.Publisher("mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=1)
