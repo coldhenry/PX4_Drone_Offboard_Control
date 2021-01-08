@@ -4,16 +4,13 @@ import rospy
 import math
 from math import sin, cos
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as Rot
-from matplotlib import animation
 from std_msgs.msg import String
 from mavros_msgs.msg import AttitudeTarget
 from geometry_msgs.msg import PoseStamped, TwistStamped  ## ???
 
 from geometric_controller import geometric_controller as geo_ctl
 
-print("hi")
 
 class callback:
     def __init__(self):
