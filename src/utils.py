@@ -2,7 +2,7 @@ import numpy as np
 from math import sin, cos
 
 
-def trajGenerator(option, t, pos=[0, 0, 0]):
+def trajGenerator(t, option, pos=[0, 0, 0]):
 
     if option is "fixed position":
         des_pos = np.array([pos]).T
