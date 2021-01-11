@@ -107,13 +107,14 @@ class Controller:
         # Instantiate a attitude message
         self.at = AttitudeTarget()
         # set the flag to use position setpoints and yaw angle
+        self.at.type_mask = 128
         self.sp.type_mask = int("010111111000", 2)
         # LOCAL_NED
         self.sp.coordinate_frame = 1
 
         # We will fly at a fixed altitude for now
         # Altitude setpoint, [meters]
-        self.ALT_SP = 3.00
+        self.ALT_SP = 0.00
         # update the setpoint message with the required altitude
         self.sp.position.z = self.ALT_SP
         # Step size for position update
@@ -202,8 +203,11 @@ def main():
 
     # attitude publisher
     at_pub = rospy.Publisher(
-        "mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=1
+        "/mavros/setpoint_raw/attitude", AttitudeTarget, queue_size=1
     )
+
+    # Setpoint publisher
+    sp_pub = rospy.Publisher("mavros/setpoint_raw/local", PositionTarget, queue_size=1)
 
     # wait for FCU connection
     while not rospy.is_shutdown() and not cnt.state.connected:
@@ -214,8 +218,8 @@ def main():
     k = 0
     print ("send few commands")
     while k < 10:
-        at_pub.publish(cnt.at)
-        # sp_pub.publish(cnt.sp)
+        #at_pub.publish(cnt.sp)
+        sp_pub.publish(cnt.sp)
         rate.sleep()
         k = k + 1
 
