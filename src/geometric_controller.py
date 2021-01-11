@@ -76,7 +76,7 @@ def geometric_controller(y, t):
 
     # desired states
     # des_pos, des_vel, des_acc: size (3,1)
-    des_pos, des_vel, des_acc = trajGenerator(option = "fixed position")
+    des_pos, des_vel, des_acc = trajGenerator(t, option = "spiral")
     
 
     b1d = np.array([[cos(np.pi * t), sin(np.pi * t), 0]]).T
