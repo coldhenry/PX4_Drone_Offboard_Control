@@ -10,7 +10,7 @@ from mavros_msgs.msg import AttitudeTarget
 from geometry_msgs.msg import PoseStamped, TwistStamped  ## ???
 
 from geometric_controller import geometric_controller as geo_ctl
-
+import time
 
 class callback:
     def __init__(self):
@@ -26,7 +26,7 @@ class callback:
         self.pubCmd = rospy.Publisher("computed_cmd", AttitudeTarget, queue_size=10)
 
         ## Main loop
-        self.timer = rospy.Timer(rospy.Duration(0.1), self.mainLoop)
+        self.timer = rospy.Timer(rospy.Duration(0.05), self.mainLoop)
 
         ## Variables list
         self.time = 0.0
@@ -51,17 +51,21 @@ class callback:
         # self.getError()
         # self.PDcontroller()
         
-
         # geometric controller
         #t = np.linspace(self.time, self.time + 0.1, 1)
+
         t = self.time
         rotmat = np.array(self.rotmat.as_dcm())
+        # print("ROTMAT:",rotmat)
         self.state = np.concatenate((self.x, self.y, self.z, self.vx, self.vy, self.vz, rotmat, self.roll_v, self.pitch_v, self.yaw_v), axis=None)
-        #print(self.state)
-        f, M, _, _, _, _ = geo_ctl(self.state, t)
-        print("f: {f}\n M: {M}\n".format(f = f, M = M))
+        print(self.state)
+        f, M, _, _, _, _ = geo_ctl(self.state, 0.01*t)
         self.time += 0.1
+        #f = np.clip(f/90+0.5,0,1)
+        M = np.clip(M*10,-3,3)
+        print("f: {f}\n M: {M}\n".format(f = f, M = M))
         self.pubRLcmd(f, M)
+        time.sleep(0.01)
 
     def feedbackPose_cb(self, data):
         self.x, self.y, self.z = (
@@ -238,6 +242,7 @@ class callback:
         # print("F", msg.thrust)
         # ============================RL controller
 
+        
         # ============================Geo controller
         msg.body_rate.x = M[0]
         msg.body_rate.y = M[1]
