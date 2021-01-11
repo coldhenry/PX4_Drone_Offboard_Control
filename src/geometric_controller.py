@@ -125,13 +125,13 @@ def geometric_controller(y, t):
     )  # Moment {wx, wy, wz}
     print(M)
 
-    return f, M, R, w, J
+    return f, M, R, w, J, v_curr
 
 
 # ode function
 def step(y, t):  # odeint
 
-    _, M, R, w, J = geometric_controller(y, t)
+    f, M, R, w, J, v_curr = geometric_controller(y, t)
 
     v_dot = np.dot(-g, e3) + np.dot((f / m) * R, e3)
 
