@@ -76,8 +76,7 @@ def geometric_controller(y, t):
 
     # desired states
     # des_pos, des_vel, des_acc: size (3,1)
-    des_pos, des_vel, des_acc = trajGenerator(t, option = "spiral")
-    
+    des_pos, des_vel, des_acc = trajGenerator(t, option="spiral")
 
     b1d = np.array([[cos(np.pi * t), sin(np.pi * t), 0]]).T
     w_desired = np.array([[0, 0, 0]]).T
@@ -89,7 +88,7 @@ def geometric_controller(y, t):
 
     b3_desired = A / np.linalg.norm(A)
     f = np.dot(A.T, b3)  # Thurst
-    #print("f", f)
+    # print("f", f)
 
     # Attitude Control
 
@@ -115,7 +114,7 @@ def geometric_controller(y, t):
     M = (
         -(kR * R_e) - (kOm * Om_e) + vec_cross(w, np.dot(J, w)) - np.dot(J, C)
     )  # Moment {wx, wy, wz}
-    #print(M)
+    # print(M)
 
     return f, M, R, w, J, v_curr
 
@@ -129,7 +128,7 @@ def step(y, t):  # odeint
 
     R_dot = np.dot(R, hat_map(w))
 
-    tmp = -vec_cross(w, np.dot(J,w)) + M
+    tmp = -vec_cross(w, np.dot(J, w)) + M
 
     Omega_dot = np.dot(np.linalg.inv(J), tmp)
 

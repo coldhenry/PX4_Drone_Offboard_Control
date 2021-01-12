@@ -12,6 +12,7 @@ from geometry_msgs.msg import PoseStamped, TwistStamped  ## ???
 from geometric_controller import geometric_controller as geo_ctl
 import time
 
+
 class callback:
     def __init__(self):
 
@@ -38,7 +39,9 @@ class callback:
         self.vx, self.vy, self.vz = 0.0, 0.0, 0.0
         self.vx_d, self.vy_d, self.vz_d = 0.0, 0.0, 0.0
         self.roll_v, self.pitch_v, self.yaw_v = 0.0, 0.0, 0.0
-        self.rotmat = Rot.from_dcm(np.array([[1.0,0.0,0.0],[0.0,1.0,0.0],[0.0,0.0,1.0]]))
+        self.rotmat = Rot.from_dcm(
+            np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        )
         self.rotmat_d = np.zeros((3, 3))
         self.euler = np.zeros((3,))
         self.euler_d = np.zeros((3,))
@@ -46,24 +49,38 @@ class callback:
         self.roll_d, self.pitch_d, self.yaw_d = 0.0, 0.0, 0.0
 
     def mainLoop(self, timer):
-        
+
         # PD controller
         # self.getError()
         # self.PDcontroller()
-        
+
         # geometric controller
-        #t = np.linspace(self.time, self.time + 0.1, 1)
+        # t = np.linspace(self.time, self.time + 0.1, 1)
 
         t = self.time
         rotmat = np.array(self.rotmat.as_dcm())
         # print("ROTMAT:",rotmat)
-        self.state = np.concatenate((self.x, self.y, self.z, self.vx, self.vy, self.vz, rotmat, self.roll_v, self.pitch_v, self.yaw_v), axis=None)
+        self.state = np.concatenate(
+            (
+                self.x,
+                self.y,
+                self.z,
+                self.vx,
+                self.vy,
+                self.vz,
+                rotmat,
+                self.roll_v,
+                self.pitch_v,
+                self.yaw_v,
+            ),
+            axis=None,
+        )
         print(self.state)
-        f, M, _, _, _, _ = geo_ctl(self.state, 0.01*t)
+        f, M, _, _, _, _ = geo_ctl(self.state, t)
         self.time += 0.1
-        #f = np.clip(f/90+0.5,0,1)
-        M = np.clip(M*10,-3,3)
-        print("f: {f}\n M: {M}\n".format(f = f, M = M))
+        # f = np.clip(f/90+0.5,0,1)
+        M = np.clip(M * 10, -3, 3)
+        print("f: {f}\n M: {M}\n".format(f=f, M=M))
         self.pubRLcmd(f, M)
         time.sleep(0.01)
 
@@ -79,7 +96,7 @@ class callback:
             data.pose.orientation.z,
             data.pose.orientation.w,
         )
-        
+
         self.rotmat = Rot.from_quat([self.qx, self.qy, self.qz, self.qw])
         self.euler = self.rotmat.as_euler("zxy", degrees=False)  # changed here
         # print('euler',self.euler)
@@ -166,7 +183,7 @@ class callback:
         m = 1.56  # 0.03   # 1.56
         jx = 0.029125  # 1.43e-5 #
         jy = 0.029125  # 1.43e-5 #0.029125
-        jz = 0.05522  # 2.89e-5 
+        jz = 0.05522  # 2.89e-5
 
         # position controller params
         Kp = np.array([[15, 15, 30]]) * 1
@@ -186,7 +203,7 @@ class callback:
 
         # Thurst
         self.F = m * (g + acc_des3)
-        #print("F:", self.F)
+        # print("F:", self.F)
         # self.F = np.clip(self.F, 0.0, 100000.0)
         # Moment
 
@@ -242,7 +259,6 @@ class callback:
         # print("F", msg.thrust)
         # ============================RL controller
 
-        
         # ============================Geo controller
         msg.body_rate.x = M[0]
         msg.body_rate.y = M[1]

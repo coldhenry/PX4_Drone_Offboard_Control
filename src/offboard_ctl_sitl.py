@@ -218,7 +218,7 @@ def main():
     k = 0
     print ("send few commands")
     while k < 10:
-        #at_pub.publish(cnt.sp)
+        # at_pub.publish(cnt.sp)
         sp_pub.publish(cnt.sp)
         rate.sleep()
         k = k + 1
